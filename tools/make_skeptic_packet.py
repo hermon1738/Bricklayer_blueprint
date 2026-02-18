@@ -148,24 +148,28 @@ def write_diff_artifact() -> Path:
 
 
 def write_scoped_files_bundle() -> tuple[Path, Path]:
-    bundle_dir = PACKET_DIR / "files"
-    if bundle_dir.exists():
-        shutil.rmtree(bundle_dir)
-    bundle_dir.mkdir(parents=True, exist_ok=True)
+    bundle_path = PACKET_DIR / "scoped_files_bundle.md"
 
     scoped_files = parse_scoped_files()
     present: list[str] = []
     missing: list[str] = []
+    sections: list[str] = []
 
     for rel in scoped_files:
         source = ROOT / rel
-        target = bundle_dir / rel
         if source.is_file():
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, target)
             present.append(rel)
+            try:
+                contents = source.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                contents = "[binary file omitted]"
+            sections.append(f"## FILE: {rel}\n\n```text\n{contents}\n```\n")
         else:
             missing.append(rel)
+
+    bundle_path.write_text(
+        "# Scoped Files Bundle\n\n" + "\n".join(sections), encoding="utf-8"
+    )
 
     manifest_path = PACKET_DIR / "files_manifest.json"
     payload = {
@@ -174,7 +178,7 @@ def write_scoped_files_bundle() -> tuple[Path, Path]:
         "missing_files": missing,
     }
     manifest_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    return bundle_dir, manifest_path
+    return bundle_path, manifest_path
 
 
 def main() -> int:
@@ -191,7 +195,7 @@ def main() -> int:
     print(f"- {written_state.relative_to(ROOT)}")
     print(f"- {written_test.relative_to(ROOT)} (test exit {test_exit})")
     print(f"- {written_diff.relative_to(ROOT)}")
-    print(f"- {written_bundle.relative_to(ROOT)}/")
+    print(f"- {written_bundle.relative_to(ROOT)}")
     print(f"- {written_manifest.relative_to(ROOT)}")
     return 0
 
