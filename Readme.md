@@ -19,6 +19,7 @@ The rules stay the same regardless of tool.
 
 - **[OVERVIEW.md](OVERVIEW.md)** - Complete explanation of what this system is and how it works
 - **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Fast lookup guide for commands, terms, and troubleshooting
+- **[WORKFLOW_DIAGRAM.md](WORKFLOW_DIAGRAM.md)** - Visual flowcharts showing the complete workflow
 - **[Readme.md](Readme.md)** (this file) - Detailed walkthrough and getting started guide
 - **[WORKFLOW.md](WORKFLOW.md)** - Exact command sequence for executing bricks
 - **[roadmap.md](roadmap.md)** - Planning templates and brick structure
